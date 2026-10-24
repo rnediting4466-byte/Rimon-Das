@@ -18,7 +18,7 @@ tailwind.config = { theme: { extend: {
 <style>
   :root { box-sizing: border-box; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
   html { scroll-padding-top: 5rem; }
-  body { background: #F8FAFC; color: #0F172A; }
+  body { background: #F8FAFC; color: #0F172A; overflow-x: hidden; }
   :focus-visible { outline: 3px solid #3B82F6; outline-offset: 3px; }
   @keyframes drift { 0%,100% { transform: translate(0,0) rotate(0); } 50% { transform: translate(14px,-18px) rotate(12deg); } }
   @keyframes pulse-ring { 0% { transform: scale(.9); opacity: .7; } 100% { transform: scale(1.7); opacity: 0; } }
@@ -27,6 +27,26 @@ tailwind.config = { theme: { extend: {
   @keyframes pop { 0%,100% { transform: scale(.8); opacity: .5; } 50% { transform: scale(1); opacity: 1; } }
   .pop { animation: pop 2.4s ease-in-out infinite; }
   .fill { animation: fill 3s ease-in-out infinite; }
+  /* Sticky glass navbar that shrinks on scroll */
+  .site-header { transition: all 0.3s ease-in-out; background: rgba(248,250,252,.72); -webkit-backdrop-filter: blur(14px) saturate(160%); backdrop-filter: blur(14px) saturate(160%); }
+  .site-header .nav-inner { transition: all 0.3s ease-in-out; padding-top: .75rem; padding-bottom: .75rem; }
+  .site-header .brand-text, .site-header .logo-tile, .site-header .logo-tile img { transition: all 0.3s ease-in-out; }
+  .site-header.scrolled { background: rgba(248,250,252,.88); box-shadow: 0 8px 28px rgba(15,23,42,.08); }
+  .site-header.scrolled .nav-inner { padding-top: .25rem; padding-bottom: .25rem; }
+  .site-header.scrolled .brand-text { font-size: 1rem; }
+  .site-header.scrolled .logo-tile { width: 2rem; height: 2rem; }
+  .site-header.scrolled .logo-tile img { width: 1.4rem; height: 1.4rem; }
+  /* Hero hover effect: grid + text pattern revealed around the cursor */
+  .fx-zone > *:not(.hero-fx) { position: relative; z-index: 1; }
+  .hero-fx { position: absolute; inset: 0; z-index: 0; pointer-events: none; opacity: 0; transition: opacity .35s ease;
+    -webkit-mask-image: radial-gradient(280px circle at var(--mx, 50%) var(--my, 50%), #000 0%, transparent 70%);
+            mask-image: radial-gradient(280px circle at var(--mx, 50%) var(--my, 50%), #000 0%, transparent 70%); }
+  .hero-grid { background-image: linear-gradient(rgba(59,130,246,.16) 1px, transparent 1px), linear-gradient(90deg, rgba(59,130,246,.16) 1px, transparent 1px); background-size: 44px 44px; }
+  .hero-text { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='96'%3E%3Ctext x='8' y='36' font-family='Arial,sans-serif' font-size='13' fill='%233B82F6' fill-opacity='.38'%3Emotion / saas / explainer%3C/text%3E%3Ctext x='96' y='84' font-family='Arial,sans-serif' font-size='13' fill='%230F172A' fill-opacity='.22'%3Econvert / demo / grow%3C/text%3E%3C/svg%3E"); background-size: 260px 96px;
+    -webkit-mask-image: radial-gradient(170px circle at var(--mx, 50%) var(--my, 50%), #000 0%, transparent 75%);
+            mask-image: radial-gradient(170px circle at var(--mx, 50%) var(--my, 50%), #000 0%, transparent 75%); }
+  .fx-zone.hero-on .hero-fx { opacity: 1; }
+  @media (prefers-reduced-motion: reduce) { .hero-fx { transition: none; } }
   .drift { animation: drift 7s ease-in-out infinite; }
   .ring { animation: pulse-ring 2.2s ease-out infinite; }
   .bar { transform-origin: bottom; animation: bar 1.6s ease-in-out infinite; }
@@ -36,10 +56,10 @@ tailwind.config = { theme: { extend: {
 <body class="font-sans antialiased">
 
 <!-- Header -->
-<header class="sticky top-0 z-40 border-b border-slate-200 bg-paper/90 backdrop-blur" style="padding-top: env(safe-area-inset-top, 0px)">
-  <div class="mx-auto flex max-w-6xl items-center justify-between px-5 py-3">
-    <a href="#top" class="flex items-center gap-2 font-display text-lg font-extrabold" aria-label="Rimon Das home">
-      <span class="grid h-10 w-10 place-items-center rounded-xl bg-navy"><img src="data:image/png;base64,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" alt="" width="28" height="28" class="h-7 w-7"></span>
+<header class="site-header sticky top-0 z-40 border-b border-slate-200" style="padding-top: env(safe-area-inset-top, 0px)">
+  <div class="nav-inner w-full px-4 sm:px-8 md:px-12 lg:px-16 flex items-center justify-between">
+    <a href="#top" class="brand-text flex items-center gap-2 font-display text-lg font-extrabold" aria-label="Rimon Das home">
+      <span class="logo-tile grid h-10 w-10 place-items-center rounded-xl bg-navy"><img src="data:image/png;base64,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" alt="" width="28" height="28" class="h-7 w-7"></span>
       Rimon Das
     </a>
     <nav class="hidden items-center gap-8 text-sm font-medium md:flex" aria-label="Main">
@@ -49,45 +69,50 @@ tailwind.config = { theme: { extend: {
       <a class="hover:text-brand" href="#contact">Contact</a>
     </nav>
     <div class="flex items-center gap-2">
-      <a href="#contact" class="rounded-full bg-brand px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-brand/30 hover:bg-blue-600">Book a Call</a>
-      <button id="menuBtn" class="rounded-lg p-2 md:hidden" aria-label="Open menu" aria-expanded="false"><i data-lucide="menu"></i></button>
+      <a href="https://wa.me/8801863887483" target="_blank" rel="noopener noreferrer" class="hidden rounded-full border border-slate-800 bg-slate-900 px-5 py-2.5 text-sm font-bold text-white transition-all hover:bg-slate-800 md:inline-block">Chat on WhatsApp</a>
+      <a href="https://calendly.com/rnediting4466/30min" target="_blank" rel="noopener noreferrer" class="rounded-full bg-brand px-4 py-2 text-sm font-bold text-white shadow-lg sm:px-5 sm:py-2.5 shadow-brand/30 hover:bg-blue-600">Book a Call</a>
+      <button id="menuBtn" class="rounded-lg p-2.5 md:hidden" aria-label="Open menu" aria-expanded="false"><i data-lucide="menu"></i></button>
     </div>
   </div>
-  <nav id="mobileNav" class="hidden border-t border-slate-200 px-5 py-3 text-sm font-medium md:hidden" aria-label="Mobile">
-    <a class="block py-2" href="#portfolio">Portfolio</a><a class="block py-2" href="#services">Services</a>
-    <a class="block py-2" href="#process">Process</a><a class="block py-2" href="#contact">Contact</a>
+  <nav id="mobileNav" class="hidden border-t border-slate-200 px-4 py-3 text-base font-medium sm:px-8 md:hidden" aria-label="Mobile">
+    <a class="block py-3" href="#portfolio">Portfolio</a><a class="block py-3" href="#services">Services</a>
+    <a class="block py-3" href="#process">Process</a><a class="block py-3" href="#contact">Contact</a>
   </nav>
 </header>
 
 <main id="top">
 <!-- Hero -->
-<section class="mx-auto max-w-6xl px-5 pb-16 pt-14 md:pt-20">
-  <div class="mx-auto max-w-3xl text-center">
-    <p class="mb-4 inline-flex items-center gap-2 rounded-full border border-brand/30 bg-brand/10 px-4 py-1.5 text-sm font-medium text-blue-700">
-      <i data-lucide="sparkles" class="h-4 w-4"></i> B2B &amp; SaaS motion video specialist
-    </p>
-    <h1 class="font-display text-4xl font-extrabold leading-[1.05] tracking-tight md:text-6xl">Convert Visitors into Paying SaaS Customers with 2D Explainer Videos</h1>
-    <p class="mx-auto mt-6 max-w-2xl text-lg text-slate-600">I turn complex software and AI features into short, clear animated videos that explain your product in under 90 seconds, so more visitors sign up, book demos and upgrade.</p>
-    <div class="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-      <a href="#portfolio" class="inline-flex items-center justify-center gap-2 rounded-full bg-navy px-7 py-3.5 font-bold text-white hover:bg-slate-800"><i data-lucide="play-circle" class="h-5 w-5"></i> Watch Portfolio</a>
-      <a href="#contact" class="inline-flex items-center justify-center gap-2 rounded-full border-2 border-navy px-7 py-3.5 font-bold hover:bg-navy hover:text-white"><i data-lucide="message-square" class="h-5 w-5"></i> Get a Quote</a>
+<section id="hero" class="fx-zone relative w-full overflow-hidden bg-white px-4 sm:px-8 md:px-12 lg:px-16 pb-12 pt-10 md:pb-16 md:pt-16">
+  <!-- Hover effect layers (revealed only while the pointer is over the hero) -->
+  <div class="hero-fx hero-grid" aria-hidden="true"></div>
+  <div class="hero-fx hero-text" aria-hidden="true"></div>
+  <!-- Hero split: text on the left, featured demo video on the right (stacks on mobile) -->
+  <div class="grid items-center gap-10 lg:grid-cols-2 lg:gap-14">
+    <div class="text-center lg:text-left">
+      <p class="mb-4 inline-flex items-center gap-2 rounded-full border border-brand/30 bg-brand/10 px-4 py-1.5 text-sm font-medium text-blue-700">
+        <i data-lucide="sparkles" class="h-4 w-4"></i> B2B &amp; SaaS motion video specialist
+      </p>
+      <h1 class="font-display text-3xl font-extrabold leading-[1.1] tracking-tight sm:text-4xl md:text-5xl xl:text-6xl">Convert Visitors into Paying SaaS Customers with 2D Explainer Videos</h1>
+      <p class="mx-auto mt-5 max-w-xl text-base text-slate-600 sm:text-lg lg:mx-0">I turn complex software and AI features into short, clear animated videos that explain your product in under 90 seconds, so more visitors sign up, book demos and upgrade.</p>
+      <div class="mt-8 flex flex-col justify-center gap-3 sm:flex-row lg:justify-start">
+        <a href="#portfolio" class="inline-flex items-center justify-center gap-2 rounded-full bg-navy px-7 py-3.5 font-bold text-white hover:bg-slate-800"><i data-lucide="play-circle" class="h-5 w-5"></i> Watch Portfolio</a>
+        <a href="#contact" class="inline-flex items-center justify-center gap-2 rounded-full border-2 border-navy px-7 py-3.5 font-bold hover:bg-navy hover:text-white"><i data-lucide="message-square" class="h-5 w-5"></i> Get a Quote</a>
+      </div>
+    </div>
+
+    <!-- FEATURED HERO VIDEO: looping playlist, edit HERO_PLAYLIST at the top of the script -->
+    <div class="relative isolate">
+      <div class="absolute -inset-3 -z-10 rounded-[2rem] bg-brand/25 blur-2xl" aria-hidden="true"></div>
+      <div id="heroVideo" class="relative aspect-video w-full overflow-hidden rounded-3xl bg-navy shadow-2xl shadow-navy/30 ring-1 ring-navy">
+        <video id="heroA" class="absolute inset-0 h-full w-full object-cover opacity-100 transition-opacity duration-700" autoplay muted playsinline preload="auto" disablepictureinpicture aria-label="3D motion showcase"></video>
+        <video id="heroB" class="absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-700" muted playsinline preload="auto" disablepictureinpicture aria-hidden="true"></video>
+        <div id="heroMsg" class="absolute inset-0 hidden place-items-center bg-navy p-6 text-center text-sm text-slate-300">Put your video files in the same folder as index.html (see HERO_PLAYLIST in the script).</div>
+      </div>
     </div>
   </div>
 
-  <!-- Showreel -->
-  <div class="relative mx-auto mt-14 aspect-video max-w-4xl overflow-hidden rounded-3xl bg-navy shadow-2xl shadow-navy/30 ring-1 ring-navy">
-    <img src="https://img.youtube.com/vi/--_8KUs4tc8/hqdefault.jpg" alt="Showreel thumbnail" class="absolute inset-0 h-full w-full object-cover">
-    <div class="absolute inset-0 bg-navy/40"></div>
-    <button class="watch absolute inset-0 grid place-items-center" data-title="Showreel" data-yt="--_8KUs4tc8" data-mp4="" aria-label="Play showreel">
-      <span class="relative grid h-24 w-24 place-items-center">
-        <span class="ring absolute inset-0 rounded-full bg-brand"></span>
-        <span class="relative grid h-20 w-20 place-items-center rounded-full bg-brand text-white shadow-xl"><i data-lucide="play" class="h-9 w-9 translate-x-0.5 fill-white"></i></span>
-      </span>
-    </button>
-    <p class="absolute bottom-4 right-5 text-sm font-medium text-white/80">Showreel</p>
-  </div>
-
-  <div class="mx-auto mt-8 max-w-4xl">
+  <!-- Reel wall -->
+  <div class="mt-10 md:mt-14">
     <p class="mb-3 font-display text-lg font-bold">Inside a SaaS motion project</p>
     <div class="grid grid-cols-2 gap-4 lg:grid-cols-4"><button class="slot text-left" data-title="Explainer snippets" data-yt=""><span class="relative block aspect-video overflow-hidden rounded-2xl bg-gradient-to-br from-brand to-blue-900 ring-1 ring-navy"><span class="drift absolute left-3 top-3 h-8 w-8 rounded-lg bg-white/30"></span><span class="absolute bottom-3 right-3 flex h-10 items-end gap-1"><span class="bar h-full w-2 rounded bg-white/80"></span><span class="bar h-full w-2 rounded bg-white/80" style="animation-delay:-.5s"></span><span class="bar h-full w-2 rounded bg-white/80" style="animation-delay:-1s"></span></span><span class="absolute inset-0 grid place-items-center"><i data-lucide="play" class="h-7 w-7 fill-white text-white"></i></span></span><span class="mt-2 block text-sm font-bold">Explainer snippets</span><span class="block text-xs text-slate-500">Short animated product stories</span></button><button class="slot text-left" data-title="Client collaboration" data-yt=""><span class="relative block aspect-video overflow-hidden rounded-2xl bg-navy ring-1 ring-navy"><span class="pop absolute left-3 top-3 rounded-lg rounded-bl-none bg-white px-2 py-1 text-[10px] font-medium text-navy">Love scene 3!</span><span class="pop absolute bottom-3 right-3 rounded-lg rounded-br-none bg-brand px-2 py-1 text-[10px] font-medium text-white" style="animation-delay:-1.2s">Updated</span><span class="absolute inset-0 grid place-items-center"><i data-lucide="users" class="h-8 w-8 text-white"></i></span></span><span class="mt-2 block text-sm font-bold">Client collaboration</span><span class="block text-xs text-slate-500">Feedback rounds in one place</span></button><button class="slot text-left" data-title="Video delivery" data-yt=""><span class="relative block aspect-video overflow-hidden rounded-2xl bg-gradient-to-br from-slate-700 to-navy ring-1 ring-navy"><span class="absolute inset-0 grid place-items-center"><i data-lucide="download" class="h-8 w-8 text-white"></i></span><span class="absolute left-3 top-3 text-[10px] font-medium text-white/80">final_video.mp4</span><span class="absolute inset-x-3 bottom-4 block h-2 rounded bg-white/20"><span class="fill block h-2 rounded bg-brand"></span></span></span><span class="mt-2 block text-sm font-bold">Video delivery</span><span class="block text-xs text-slate-500">HD files and social cut-downs</span></button><button class="slot text-left" data-title="Client feedback" data-yt=""><span class="relative block aspect-video overflow-hidden rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-800 ring-1 ring-navy"><span class="absolute inset-0 flex flex-col items-center justify-center gap-2"><span class="flex gap-1"><i data-lucide="star" class="pop h-4 w-4 fill-yellow-300 text-yellow-300" style="animation-delay:-0.0s"></i><i data-lucide="star" class="pop h-4 w-4 fill-yellow-300 text-yellow-300" style="animation-delay:-0.3s"></i><i data-lucide="star" class="pop h-4 w-4 fill-yellow-300 text-yellow-300" style="animation-delay:-0.6s"></i><i data-lucide="star" class="pop h-4 w-4 fill-yellow-300 text-yellow-300" style="animation-delay:-0.9s"></i><i data-lucide="star" class="pop h-4 w-4 fill-yellow-300 text-yellow-300" style="animation-delay:-1.2s"></i></span><i data-lucide="thumbs-up" class="h-6 w-6 text-white"></i></span></span><span class="mt-2 block text-sm font-bold">Client feedback</span><span class="block text-xs text-slate-500">Reviews and approvals in motion</span></button></div>
   </div>
@@ -95,68 +120,69 @@ tailwind.config = { theme: { extend: {
   <!-- Social -->
   <div class="mt-10 flex flex-wrap items-center justify-center gap-4">
     <span class="text-sm font-medium text-slate-500">Follow my work</span>
-    <div class="flex gap-2">
-      <a href="https://www.linkedin.com/in/rimon-das-1705643a1/" target="_blank" rel="noopener" aria-label="LinkedIn" class="grid h-11 w-11 place-items-center rounded-full border border-slate-300 hover:border-brand hover:bg-brand hover:text-white"><i data-lucide="linkedin" class="h-5 w-5"></i></a>
-      <a href="https://www.youtube.com/@graphicmotion4/videos" target="_blank" rel="noopener" aria-label="YouTube" class="grid h-11 w-11 place-items-center rounded-full border border-slate-300 hover:border-brand hover:bg-brand hover:text-white"><i data-lucide="youtube" class="h-5 w-5"></i></a>
-      <a href="https://www.instagram.com/rimondas4466/?hl=en" target="_blank" rel="noopener" aria-label="Instagram" class="grid h-11 w-11 place-items-center rounded-full border border-slate-300 hover:border-brand hover:bg-brand hover:text-white"><i data-lucide="instagram" class="h-5 w-5"></i></a>
-      <a href="https://dribbble.com/rimondas" target="_blank" rel="noopener" aria-label="Dribbble" class="grid h-11 w-11 place-items-center rounded-full border border-slate-300 hover:border-brand hover:bg-brand hover:text-white"><i data-lucide="dribbble" class="h-5 w-5"></i></a>
-      <a href="https://www.behance.net/rn4466" target="_blank" rel="noopener" aria-label="Behance" class="grid h-11 w-11 place-items-center rounded-full border border-slate-300 hover:border-brand hover:bg-brand hover:text-white"><i data-lucide="behance" class="h-5 w-5"></i></a>
+    <div class="flex flex-wrap gap-3">
+      <a href="https://www.linkedin.com/in/rimon-das-1705643a1/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" class="grid h-11 w-11 place-items-center rounded-2xl border border-slate-800 bg-slate-900 text-white transition-all hover:scale-105 hover:bg-slate-800"><i data-lucide="linkedin" class="h-5 w-5"></i></a>
+      <a href="https://www.youtube.com/@graphicmotion4/videos" target="_blank" rel="noopener" aria-label="YouTube" class="grid h-11 w-11 place-items-center rounded-2xl border border-slate-800 bg-slate-900 text-white transition-all hover:scale-105 hover:bg-slate-800"><i data-lucide="youtube" class="h-5 w-5"></i></a>
+      <a href="https://www.instagram.com/rimondas4466/?hl=en" target="_blank" rel="noopener" aria-label="Instagram" class="grid h-11 w-11 place-items-center rounded-2xl border border-slate-800 bg-slate-900 text-white transition-all hover:scale-105 hover:bg-slate-800"><i data-lucide="instagram" class="h-5 w-5"></i></a>
+      <a href="https://x.com/Rimondas_B2B" target="_blank" rel="noopener" aria-label="X (Twitter)" class="grid h-11 w-11 place-items-center rounded-2xl border border-slate-800 bg-slate-900 text-white transition-all hover:scale-105 hover:bg-slate-800"><i data-lucide="x-twitter" class="h-5 w-5"></i></a>
+      <a href="https://dribbble.com/rimondas" target="_blank" rel="noopener" aria-label="Dribbble" class="grid h-11 w-11 place-items-center rounded-2xl border border-slate-800 bg-slate-900 text-white transition-all hover:scale-105 hover:bg-slate-800"><i data-lucide="dribbble" class="h-5 w-5"></i></a>
+      <a href="https://www.behance.net/rn4466" target="_blank" rel="noopener" aria-label="Behance" class="grid h-11 w-11 place-items-center rounded-2xl border border-slate-800 bg-slate-900 text-white transition-all hover:scale-105 hover:bg-slate-800"><i data-lucide="behance" class="h-5 w-5"></i></a>
     </div>
   </div>
 </section>
 
 <!-- Portfolio -->
-<section id="portfolio" class="bg-white py-20">
-  <div class="mx-auto max-w-6xl px-5">
+<section id="portfolio" class="bg-white py-14 md:py-20">
+  <div class="w-full px-4 sm:px-8 md:px-12 lg:px-16">
     <div class="mb-10 flex flex-col justify-between gap-4 md:flex-row md:items-end">
       <div>
-        <h2 class="font-display text-3xl font-extrabold md:text-4xl">Videos that sell software</h2>
+        <h2 class="font-display text-2xl font-extrabold sm:text-3xl md:text-4xl">Videos that sell software</h2>
         <p class="mt-2 max-w-xl text-slate-600">Pick a category to filter, watch the video, or grab the storyboard to see how each one was planned.</p>
       </div>
       <div class="flex flex-wrap gap-2" role="group" aria-label="Filter projects">
         <button class="filter rounded-full bg-navy px-4 py-2 text-sm font-medium text-white" data-f="all">All</button>
-        <button class="filter rounded-full border border-slate-300 px-4 py-2 text-sm font-medium" data-f="explainer">2D Explainer</button>
-        <button class="filter rounded-full border border-slate-300 px-4 py-2 text-sm font-medium" data-f="demo">Product Demo</button>
-        <button class="filter rounded-full border border-slate-300 px-4 py-2 text-sm font-medium" data-f="promo">SaaS Promo</button>
+        <button class="filter rounded-full border border-slate-300 px-4 py-2.5 text-sm font-medium" data-f="explainer">2D Explainer</button>
+        <button class="filter rounded-full border border-slate-300 px-4 py-2.5 text-sm font-medium" data-f="demo">Product Demo</button>
+        <button class="filter rounded-full border border-slate-300 px-4 py-2.5 text-sm font-medium" data-f="promo">SaaS Promo</button>
       </div>
     </div>
 
-    <div id="grid" class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+    <div id="grid" class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
       <article class="card overflow-hidden rounded-2xl border border-slate-200 bg-paper" data-cat="explainer">
-        <button class="watch group relative block aspect-video w-full overflow-hidden bg-navy" data-title="FlowDesk: workflow automation" data-yt="--_8KUs4tc8" data-mp4="" aria-label="Play FlowDesk: workflow automation"><img src="https://img.youtube.com/vi/--_8KUs4tc8/hqdefault.jpg" alt="FlowDesk: workflow automation thumbnail" loading="lazy" class="h-full w-full object-cover transition duration-300 group-hover:scale-105"><span class="absolute inset-0 grid place-items-center bg-navy/20"><span class="grid h-14 w-14 place-items-center rounded-full bg-brand text-white shadow-lg"><i data-lucide="play" class="h-6 w-6 fill-white"></i></span></span></button>
+        <button class="watch group relative block aspect-video w-full overflow-hidden bg-navy" data-title="FlowDesk: workflow automation" data-yt="--_8KUs4tc8" data-mp4="" aria-label="Play FlowDesk: workflow automation"><img src="https://img.youtube.com/vi/--_8KUs4tc8/maxresdefault.jpg" onerror="this.onerror=null;this.src=this.src.replace('maxresdefault','hqdefault')" alt="FlowDesk: workflow automation thumbnail" loading="lazy" class="h-full w-full object-cover transition duration-300 group-hover:scale-105" decoding="async"><span class="absolute inset-0 grid place-items-center bg-navy/20"><span class="grid h-14 w-14 place-items-center rounded-full bg-brand text-white shadow-lg"><i data-lucide="play" class="h-6 w-6 fill-white"></i></span></span></button>
         <div class="p-5">
           <p class="text-sm font-medium text-blue-700">2D Explainer · 60 sec</p>
           <h3 class="mt-1 font-display text-xl font-bold">FlowDesk: workflow automation</h3>
           <p class="mt-2 text-sm text-slate-600">Explained a 12-step automation builder in one clear story. Landing page demo requests rose after launch.</p>
           <div class="mt-5 flex flex-wrap gap-2">
             <button class="watch inline-flex items-center gap-2 rounded-full bg-brand px-4 py-2 text-sm font-bold text-white hover:bg-blue-600" data-title="FlowDesk: workflow automation" data-yt="--_8KUs4tc8" data-mp4=""><i data-lucide="play" class="h-4 w-4"></i> Watch Video</button>
-            <button class="dl inline-flex items-center gap-2 rounded-full border border-slate-300 px-4 py-2 text-sm font-medium hover:border-navy" data-title="FlowDesk storyboard"><i data-lucide="file-down" class="h-4 w-4"></i> Download Storyboard PDF</button>
+            <button class="dl inline-flex items-center gap-2 rounded-full border border-slate-300 px-4 py-2.5 text-sm font-medium hover:border-navy" data-title="FlowDesk storyboard"><i data-lucide="file-down" class="h-4 w-4"></i> Download Storyboard PDF</button>
           </div>
         </div>
       </article>
 
       <article class="card overflow-hidden rounded-2xl border border-slate-200 bg-paper" data-cat="demo">
-        <button class="watch group relative block aspect-video w-full overflow-hidden bg-navy" data-title="MetricPulse: analytics dashboard" data-yt="iWKeezwQhUw" data-mp4="" aria-label="Play MetricPulse: analytics dashboard"><img src="https://img.youtube.com/vi/iWKeezwQhUw/hqdefault.jpg" alt="MetricPulse: analytics dashboard thumbnail" loading="lazy" class="h-full w-full object-cover transition duration-300 group-hover:scale-105"><span class="absolute inset-0 grid place-items-center bg-navy/20"><span class="grid h-14 w-14 place-items-center rounded-full bg-brand text-white shadow-lg"><i data-lucide="play" class="h-6 w-6 fill-white"></i></span></span></button>
+        <button class="watch group relative block aspect-video w-full overflow-hidden bg-navy" data-title="MetricPulse: analytics dashboard" data-yt="iWKeezwQhUw" data-mp4="" aria-label="Play MetricPulse: analytics dashboard"><img src="https://img.youtube.com/vi/iWKeezwQhUw/maxresdefault.jpg" onerror="this.onerror=null;this.src=this.src.replace('maxresdefault','hqdefault')" alt="MetricPulse: analytics dashboard thumbnail" loading="lazy" class="h-full w-full object-cover transition duration-300 group-hover:scale-105" decoding="async"><span class="absolute inset-0 grid place-items-center bg-navy/20"><span class="grid h-14 w-14 place-items-center rounded-full bg-brand text-white shadow-lg"><i data-lucide="play" class="h-6 w-6 fill-white"></i></span></span></button>
         <div class="p-5">
           <p class="text-sm font-medium text-blue-700">Product Demo · 90 sec</p>
           <h3 class="mt-1 font-display text-xl font-bold">MetricPulse: analytics dashboard</h3>
           <p class="mt-2 text-sm text-slate-600">An animated UI walkthrough that shows the first-week activation path without a live demo call.</p>
           <div class="mt-5 flex flex-wrap gap-2">
             <button class="watch inline-flex items-center gap-2 rounded-full bg-brand px-4 py-2 text-sm font-bold text-white hover:bg-blue-600" data-title="MetricPulse: analytics dashboard" data-yt="iWKeezwQhUw" data-mp4=""><i data-lucide="play" class="h-4 w-4"></i> Watch Video</button>
-            <button class="dl inline-flex items-center gap-2 rounded-full border border-slate-300 px-4 py-2 text-sm font-medium hover:border-navy" data-title="MetricPulse storyboard"><i data-lucide="file-down" class="h-4 w-4"></i> Download Storyboard PDF</button>
+            <button class="dl inline-flex items-center gap-2 rounded-full border border-slate-300 px-4 py-2.5 text-sm font-medium hover:border-navy" data-title="MetricPulse storyboard"><i data-lucide="file-down" class="h-4 w-4"></i> Download Storyboard PDF</button>
           </div>
         </div>
       </article>
 
       <article class="card overflow-hidden rounded-2xl border border-slate-200 bg-paper" data-cat="promo">
-        <button class="watch group relative block aspect-video w-full overflow-hidden bg-navy" data-title="Neurabot: AI support agent" data-yt="sze5TH-qHZs" data-mp4="" aria-label="Play Neurabot: AI support agent"><img src="https://img.youtube.com/vi/sze5TH-qHZs/hqdefault.jpg" alt="Neurabot: AI support agent thumbnail" loading="lazy" class="h-full w-full object-cover transition duration-300 group-hover:scale-105"><span class="absolute inset-0 grid place-items-center bg-navy/20"><span class="grid h-14 w-14 place-items-center rounded-full bg-brand text-white shadow-lg"><i data-lucide="play" class="h-6 w-6 fill-white"></i></span></span></button>
+        <button class="watch group relative block aspect-video w-full overflow-hidden bg-navy" data-title="Neurabot: AI support agent" data-yt="sze5TH-qHZs" data-mp4="" aria-label="Play Neurabot: AI support agent"><img src="https://img.youtube.com/vi/sze5TH-qHZs/maxresdefault.jpg" onerror="this.onerror=null;this.src=this.src.replace('maxresdefault','hqdefault')" alt="Neurabot: AI support agent thumbnail" loading="lazy" class="h-full w-full object-cover transition duration-300 group-hover:scale-105" decoding="async"><span class="absolute inset-0 grid place-items-center bg-navy/20"><span class="grid h-14 w-14 place-items-center rounded-full bg-brand text-white shadow-lg"><i data-lucide="play" class="h-6 w-6 fill-white"></i></span></span></button>
         <div class="p-5">
           <p class="text-sm font-medium text-blue-700">SaaS Promo · 30 sec</p>
           <h3 class="mt-1 font-display text-xl font-bold">Neurabot: AI support agent</h3>
           <p class="mt-2 text-sm text-slate-600">A fast launch promo cut into 15 and 30-second versions for LinkedIn, X and paid social.</p>
           <div class="mt-5 flex flex-wrap gap-2">
             <button class="watch inline-flex items-center gap-2 rounded-full bg-brand px-4 py-2 text-sm font-bold text-white hover:bg-blue-600" data-title="Neurabot: AI support agent" data-yt="sze5TH-qHZs" data-mp4=""><i data-lucide="play" class="h-4 w-4"></i> Watch Video</button>
-            <button class="dl inline-flex items-center gap-2 rounded-full border border-slate-300 px-4 py-2 text-sm font-medium hover:border-navy" data-title="Neurabot storyboard"><i data-lucide="file-down" class="h-4 w-4"></i> Download Storyboard PDF</button>
+            <button class="dl inline-flex items-center gap-2 rounded-full border border-slate-300 px-4 py-2.5 text-sm font-medium hover:border-navy" data-title="Neurabot storyboard"><i data-lucide="file-down" class="h-4 w-4"></i> Download Storyboard PDF</button>
           </div>
         </div>
       </article>
@@ -165,10 +191,10 @@ tailwind.config = { theme: { extend: {
 </section>
 
 <!-- Services -->
-<section id="services" class="mx-auto max-w-6xl px-5 py-20">
-  <h2 class="font-display text-3xl font-extrabold md:text-4xl">What I make for SaaS teams</h2>
+<section id="services" class="w-full px-4 sm:px-8 md:px-12 lg:px-16 py-14 md:py-20">
+  <h2 class="font-display text-2xl font-extrabold sm:text-3xl md:text-4xl">What I make for SaaS teams</h2>
   <p class="mt-2 max-w-xl text-slate-600">Each service is built around one goal: help a visitor understand your product faster.</p>
-  <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+  <div class="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
     <div class="rounded-2xl border border-slate-200 bg-white p-6"><div class="mb-4 grid h-12 w-12 place-items-center rounded-xl bg-brand/10 text-brand"><i data-lucide="clapperboard"></i></div><h3 class="font-display text-lg font-bold">2D Explainer Videos</h3><p class="mt-2 text-sm text-slate-600">Story-led animations that put your product's value into plain words.</p></div>
     <div class="rounded-2xl border border-slate-200 bg-white p-6"><div class="mb-4 grid h-12 w-12 place-items-center rounded-xl bg-brand/10 text-brand"><i data-lucide="monitor-play"></i></div><h3 class="font-display text-lg font-bold">SaaS Product Demos</h3><p class="mt-2 text-sm text-slate-600">Animated UI walkthroughs that show key features without a sales call.</p></div>
     <div class="rounded-2xl border border-slate-200 bg-white p-6"><div class="mb-4 grid h-12 w-12 place-items-center rounded-xl bg-brand/10 text-brand"><i data-lucide="megaphone"></i></div><h3 class="font-display text-lg font-bold">Social Ad Creatives</h3><p class="mt-2 text-sm text-slate-600">Short, scroll-stopping cuts sized for LinkedIn, YouTube, Instagram and X.</p></div>
@@ -177,11 +203,11 @@ tailwind.config = { theme: { extend: {
 </section>
 
 <!-- Process -->
-<section id="process" class="bg-navy py-20 text-white">
-  <div class="mx-auto max-w-6xl px-5">
-    <h2 class="font-display text-3xl font-extrabold md:text-4xl">From brief to final video in 4 steps</h2>
+<section id="process" class="bg-navy py-14 text-white md:py-20">
+  <div class="w-full px-4 sm:px-8 md:px-12 lg:px-16">
+    <h2 class="font-display text-2xl font-extrabold sm:text-3xl md:text-4xl">From brief to final video in 4 steps</h2>
     <p class="mt-2 max-w-xl text-slate-300">You see and approve the work at every stage, so there are no surprises at delivery.</p>
-    <ol class="mt-10 grid gap-6 md:grid-cols-4">
+    <ol class="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
       <li class="rounded-2xl border border-white/10 bg-white/5 p-6"><span class="grid h-10 w-10 place-items-center rounded-full bg-brand font-display font-bold">1</span><h3 class="mt-4 font-display text-lg font-bold">Script &amp; Concept</h3><p class="mt-2 text-sm text-slate-300">We define your audience, goal and the one message the video must land.</p></li>
       <li class="rounded-2xl border border-white/10 bg-white/5 p-6"><span class="grid h-10 w-10 place-items-center rounded-full bg-brand font-display font-bold">2</span><h3 class="mt-4 font-display text-lg font-bold">Storyboard</h3><p class="mt-2 text-sm text-slate-300">You review every scene and visual style before animation begins.</p></li>
       <li class="rounded-2xl border border-white/10 bg-white/5 p-6"><span class="grid h-10 w-10 place-items-center rounded-full bg-brand font-display font-bold">3</span><h3 class="mt-4 font-display text-lg font-bold">Voiceover &amp; Motion</h3><p class="mt-2 text-sm text-slate-300">Professional voice, sound design and animation, with two revision rounds.</p></li>
@@ -191,21 +217,24 @@ tailwind.config = { theme: { extend: {
 </section>
 
 <!-- Contact -->
-<section id="contact" class="mx-auto max-w-6xl px-5 py-20">
-  <div class="grid gap-10 lg:grid-cols-2">
+<section id="contact" class="fx-zone relative w-full overflow-hidden bg-white px-4 sm:px-8 md:px-12 lg:px-16 py-14 md:py-20">
+  <!-- Hover effect layers (same as hero) -->
+  <div class="hero-fx hero-grid" aria-hidden="true"></div>
+  <div class="hero-fx hero-text" aria-hidden="true"></div>
+  <div class="grid grid-cols-1 gap-10 lg:grid-cols-2">
     <div>
-      <h2 class="font-display text-3xl font-extrabold md:text-4xl">Let's plan your explainer video</h2>
-      <p class="mt-3 max-w-md text-slate-600">Book a free 20-minute call or send the form. I reply within one business day.</p>
+      <h2 class="font-display text-2xl font-extrabold sm:text-3xl md:text-4xl">Let's plan your explainer video</h2>
+      <p class="mt-3 max-w-md text-slate-600">Book a free 30-minute call, message me on WhatsApp or send the form. I reply within one business day.</p>
       <ul class="mt-8 space-y-4">
-        <li class="flex items-center gap-3"><span class="grid h-11 w-11 place-items-center rounded-xl bg-brand/10 text-brand"><i data-lucide="mail"></i></span><a class="font-medium hover:text-brand" href="mailto:hello@rimondas.com">hello@rimondas.com</a></li>
-        <li class="flex items-center gap-3"><span class="grid h-11 w-11 place-items-center rounded-xl bg-brand/10 text-brand"><i data-lucide="phone"></i></span><a class="font-medium hover:text-brand" href="tel:+8801000000000">+880 1000 000000</a></li>
+        <li class="flex items-center gap-3"><span class="grid h-11 w-11 place-items-center rounded-xl bg-brand/10 text-brand"><i data-lucide="mail"></i></span><a class="font-medium hover:text-brand" href="mailto:rimondasfx@gmail.com">rimondasfx@gmail.com</a></li>
+        <li class="flex items-center gap-3"><span class="grid h-11 w-11 place-items-center rounded-xl bg-brand/10 text-brand"><i data-lucide="phone"></i></span><a class="font-medium hover:text-brand" href="tel:+8801863887483">01863887483</a></li>
         <li class="flex items-center gap-3"><span class="grid h-11 w-11 place-items-center rounded-xl bg-brand/10 text-brand"><i data-lucide="map-pin"></i></span><span class="font-medium">Dhaka, Bangladesh · working with global teams</span></li>
       </ul>
-      <a href="https://calendly.com/your-link" target="_blank" rel="noopener" class="mt-8 inline-flex items-center gap-2 rounded-full bg-brand px-7 py-3.5 font-bold text-white shadow-lg shadow-brand/30 hover:bg-blue-600"><i data-lucide="calendar-check" class="h-5 w-5"></i> Book a Call on Calendly</a>
+      <div class="mt-8 flex flex-col gap-3 sm:flex-row"><a href="https://calendly.com/rnediting4466/30min" target="_blank" rel="noopener noreferrer" class="inline-flex w-full items-center justify-center gap-2 rounded-full bg-brand px-7 py-3.5 font-bold text-white shadow-lg shadow-brand/30 transition-all hover:scale-105 hover:bg-blue-600 sm:w-auto"><i data-lucide="calendar-check" class="h-5 w-5"></i> Book a Call on Calendly</a><a href="https://wa.me/8801863887483" target="_blank" rel="noopener noreferrer" class="inline-flex w-full items-center justify-center gap-2 rounded-full border border-slate-800 bg-slate-900 px-7 py-3.5 font-bold text-white transition-all hover:scale-105 hover:bg-slate-800 sm:w-auto"><i data-lucide="message-circle" class="h-5 w-5"></i> Chat on WhatsApp</a></div>
     </div>
 
-    <form id="form" class="space-y-4 rounded-3xl border border-slate-200 bg-white p-6 md:p-8" novalidate>
-      <div><label for="name" class="mb-1 block text-sm font-medium">Your name</label><input id="name" required class="w-full rounded-xl border border-slate-300 px-4 py-3 focus:border-brand" placeholder="Jane Cooper"></div>
+    <form id="form" class="space-y-4 rounded-3xl border border-slate-200 bg-white p-5 sm:p-6 md:p-8" novalidate>
+      <div><label for="name" class="mb-1 block text-sm font-medium">Your name</label><input id="name" required class="w-full rounded-xl border border-slate-300 px-4 py-3 text-base focus:border-brand" placeholder="Jane Cooper"></div>
       <div><label for="email" class="mb-1 block text-sm font-medium">Work email</label><input id="email" type="email" required class="w-full rounded-xl border border-slate-300 px-4 py-3 focus:border-brand" placeholder="jane@startup.com"></div>
       <div><label for="type" class="mb-1 block text-sm font-medium">What do you need?</label>
         <select id="type" class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3"><option>2D Explainer Video</option><option>SaaS Product Demo</option><option>Social Ad Creatives</option><option>Script / Storyboarding</option></select></div>
@@ -220,24 +249,25 @@ tailwind.config = { theme: { extend: {
 
 <!-- Footer -->
 <footer class="border-t border-slate-200 bg-white" style="padding-bottom: env(safe-area-inset-bottom, 0px)">
-  <div class="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-5 py-8 sm:flex-row">
+  <div class="w-full px-4 sm:px-8 md:px-12 lg:px-16 flex flex-col items-center justify-between gap-4 py-8 sm:flex-row">
     <div class="flex items-center gap-3"><span class="grid h-9 w-9 place-items-center rounded-lg bg-navy"><img src="data:image/png;base64,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" alt="Rimon Das logo" width="24" height="24" class="h-6 w-6"></span><p class="text-sm text-slate-500">© <span id="yr">2026</span> Rimon Das. All rights reserved.</p></div>
-    <div class="flex gap-2">
-      <a href="https://www.linkedin.com/in/rimon-das-1705643a1/" target="_blank" rel="noopener" aria-label="LinkedIn" class="p-2 hover:text-brand"><i data-lucide="linkedin" class="h-5 w-5"></i></a>
-      <a href="https://www.youtube.com/@graphicmotion4/videos" target="_blank" rel="noopener" aria-label="YouTube" class="p-2 hover:text-brand"><i data-lucide="youtube" class="h-5 w-5"></i></a>
-      <a href="https://www.instagram.com/rimondas4466/?hl=en" target="_blank" rel="noopener" aria-label="Instagram" class="p-2 hover:text-brand"><i data-lucide="instagram" class="h-5 w-5"></i></a>
-      <a href="https://dribbble.com/rimondas" target="_blank" rel="noopener" aria-label="Dribbble" class="p-2 hover:text-brand"><i data-lucide="dribbble" class="h-5 w-5"></i></a>
-      <a href="https://www.behance.net/rn4466" target="_blank" rel="noopener" aria-label="Behance" class="p-2 hover:text-brand"><i data-lucide="behance" class="h-5 w-5"></i></a>
+    <div class="flex flex-wrap gap-3">
+      <a href="https://www.linkedin.com/in/rimon-das-1705643a1/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" class="grid h-10 w-10 place-items-center rounded-2xl border border-slate-800 bg-slate-900 text-white transition-all hover:scale-105 hover:bg-slate-800"><i data-lucide="linkedin" class="h-5 w-5"></i></a>
+      <a href="https://www.youtube.com/@graphicmotion4/videos" target="_blank" rel="noopener" aria-label="YouTube" class="grid h-10 w-10 place-items-center rounded-2xl border border-slate-800 bg-slate-900 text-white transition-all hover:scale-105 hover:bg-slate-800"><i data-lucide="youtube" class="h-5 w-5"></i></a>
+      <a href="https://www.instagram.com/rimondas4466/?hl=en" target="_blank" rel="noopener" aria-label="Instagram" class="grid h-10 w-10 place-items-center rounded-2xl border border-slate-800 bg-slate-900 text-white transition-all hover:scale-105 hover:bg-slate-800"><i data-lucide="instagram" class="h-5 w-5"></i></a>
+      <a href="https://x.com/Rimondas_B2B" target="_blank" rel="noopener" aria-label="X (Twitter)" class="grid h-10 w-10 place-items-center rounded-2xl border border-slate-800 bg-slate-900 text-white transition-all hover:scale-105 hover:bg-slate-800"><i data-lucide="x-twitter" class="h-5 w-5"></i></a>
+      <a href="https://dribbble.com/rimondas" target="_blank" rel="noopener" aria-label="Dribbble" class="grid h-10 w-10 place-items-center rounded-2xl border border-slate-800 bg-slate-900 text-white transition-all hover:scale-105 hover:bg-slate-800"><i data-lucide="dribbble" class="h-5 w-5"></i></a>
+      <a href="https://www.behance.net/rn4466" target="_blank" rel="noopener" aria-label="Behance" class="grid h-10 w-10 place-items-center rounded-2xl border border-slate-800 bg-slate-900 text-white transition-all hover:scale-105 hover:bg-slate-800"><i data-lucide="behance" class="h-5 w-5"></i></a>
     </div>
   </div>
 </footer>
 
 <!-- Video modal -->
-<div id="modal" class="fixed inset-0 z-50 hidden place-items-center bg-navy/90 p-5" role="dialog" aria-modal="true" aria-labelledby="mTitle">
-  <div class="w-full max-w-3xl">
+<div id="modal" class="fixed inset-0 z-50 hidden place-items-center bg-navy/90 p-3 sm:p-6" role="dialog" aria-modal="true" aria-labelledby="mTitle">
+  <div class="w-full max-w-3xl lg:max-w-5xl">
     <div class="mb-3 flex items-center justify-between text-white">
       <h3 id="mTitle" class="font-display text-lg font-bold"></h3>
-      <button id="close" class="rounded-full p-2 hover:bg-white/10" aria-label="Close video"><i data-lucide="x"></i></button>
+      <button id="close" class="rounded-full p-3 hover:bg-white/10" aria-label="Close video"><i data-lucide="x"></i></button>
     </div>
     <div id="player" class="aspect-video overflow-hidden rounded-2xl bg-slate-800"></div>
   </div>
@@ -247,7 +277,10 @@ tailwind.config = { theme: { extend: {
 <div id="toast" class="pointer-events-none fixed bottom-6 left-1/2 z-50 -translate-x-1/2 translate-y-6 rounded-full bg-navy px-5 py-3 text-sm font-medium text-white opacity-0 shadow-xl transition" role="status"></div>
 
 <script>
+  // ===== HERO VIDEO PLAYLIST: edit file names here (plays in order, then loops) =====
+  const HERO_PLAYLIST = ['video1.mp4.mp4', 'video2.mp4.mp4', 'video3.mp4.mp4', 'video5.mp4.mp4'];
   const IC = {
+    'x-twitter': '<path fill="currentColor" stroke="none" d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/>',
     linkedin: '<path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/>',
     youtube: '<path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17"/><path d="m10 15 5-3-5-3z"/>',
     instagram: '<rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>',
@@ -265,6 +298,11 @@ tailwind.config = { theme: { extend: {
   if (window.lucide) lucide.createIcons();
   document.getElementById('yr').textContent = new Date().getFullYear();
 
+  // Shrinking navbar on scroll
+  const siteHeader = document.querySelector('.site-header');
+  const onScroll = () => siteHeader.classList.toggle('scrolled', window.scrollY > 20);
+  window.addEventListener('scroll', onScroll, { passive: true }); onScroll();
+
   // Mobile menu
   const mb = document.getElementById('menuBtn'), mn = document.getElementById('mobileNav');
   mb.onclick = () => { const o = mn.classList.toggle('hidden'); mb.setAttribute('aria-expanded', String(!o)); };
@@ -272,7 +310,7 @@ tailwind.config = { theme: { extend: {
 
   // Portfolio filter
   document.querySelectorAll('.filter').forEach(b => b.onclick = () => {
-    document.querySelectorAll('.filter').forEach(x => x.className = 'filter rounded-full border border-slate-300 px-4 py-2 text-sm font-medium');
+    document.querySelectorAll('.filter').forEach(x => x.className = 'filter rounded-full border border-slate-300 px-4 py-2.5 text-sm font-medium');
     b.className = 'filter rounded-full bg-navy px-4 py-2 text-sm font-medium text-white';
     document.querySelectorAll('.card').forEach(c => c.style.display = (b.dataset.f === 'all' || c.dataset.cat === b.dataset.f) ? '' : 'none');
   });
@@ -280,24 +318,72 @@ tailwind.config = { theme: { extend: {
   // Video modal
   const modal = document.getElementById('modal');
   const player = document.getElementById('player');
-  const openM = (title, id, mp4) => {
-    document.getElementById('mTitle').textContent = title;
-    const thumb = id ? 'https://img.youtube.com/vi/' + id + '/hqdefault.jpg' : '';
+  const embed = (title, id, mp4) => {
+    const thumb = id ? 'https://img.youtube.com/vi/' + id + '/maxresdefault.jpg' : '';
+    let html;
     if (mp4) {
       // Self-hosted MP4: plays inline anywhere, including file:// on your PC
-      player.innerHTML = '<video class="h-full w-full bg-black" src="' + mp4 + '" poster="' + thumb + '" controls autoplay playsinline></video>';
+      html = '<video class="h-full w-full bg-black" src="' + mp4 + '" poster="' + thumb + '" controls autoplay playsinline></video>';
     } else if (id && location.protocol === 'file:') {
       // YouTube refuses embeds from file:// pages (no referrer), so explain instead of showing an error screen
-      player.innerHTML = '<div class="relative grid h-full place-items-center bg-cover bg-center p-6 text-center text-white" style="background-image:url(' + thumb + ')"><div class="absolute inset-0 bg-navy/80"></div><div class="relative max-w-md"><p class="font-display text-lg font-bold">Local preview mode</p><p class="mt-2 text-sm text-slate-200">YouTube blocks embedded players on pages opened from your computer. Run start-preview.bat (or upload the site) and this video plays right here. You can also set a data-mp4 file on this button to play it locally.</p></div></div>';
+      html = '<div class="relative grid h-full place-items-center bg-cover bg-center p-6 text-center text-white" style="background-image:url(' + thumb + ')"><div class="absolute inset-0 bg-navy/80"></div><div class="relative max-w-md"><p class="font-display text-lg font-bold">Local preview mode</p><p class="mt-2 text-sm text-slate-200">YouTube blocks embedded players on pages opened from your computer. Run start-preview.bat (or upload the site) and this video plays right here. You can also set a data-mp4 file on this button to play it locally.</p></div></div>';
     } else if (id) {
-      player.innerHTML = '<iframe class="h-full w-full" src="https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&mute=0&controls=1&origin=null" title="' + title + '" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>';
+      html = '<iframe class="h-full w-full" src="https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&mute=0&controls=1&origin=null&vq=hd1080&suggestedQuality=hd1080" title="' + title + '" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>';
     } else {
-      player.innerHTML = '<div class="grid h-full place-items-center p-6 text-center text-white"><div><p class="font-medium">Reel slot ready</p><p class="mt-1 text-sm text-slate-300">Add a YouTube video ID in this slot\'s data-yt attribute.</p></div></div>';
+      html = '<div class="grid h-full place-items-center p-6 text-center text-white"><div><p class="font-medium">Reel slot ready</p><p class="mt-1 text-sm text-slate-300">Add a YouTube video ID in this slot\'s data-yt attribute.</p></div></div>';
     }
+    return html;
+  };
+  const openM = (title, id, mp4) => {
+    document.getElementById('mTitle').textContent = title;
+    player.innerHTML = embed(title, id, mp4);
     modal.classList.replace('hidden', 'grid'); document.getElementById('close').focus();
   };
   const closeM = () => { modal.classList.replace('grid', 'hidden'); player.innerHTML = ''; };
   document.querySelectorAll('.watch, .slot').forEach(b => b.onclick = () => openM(b.dataset.title, b.dataset.yt, b.dataset.mp4));
+
+  // Hover effect: grid + text pattern follow the cursor inside the hero and contact sections only
+  document.querySelectorAll('.fx-zone').forEach(zone => {
+    zone.addEventListener('pointermove', e => {
+      const r = zone.getBoundingClientRect();
+      zone.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+      zone.style.setProperty('--my', (e.clientY - r.top) + 'px');
+      zone.classList.add('hero-on');
+    });
+    zone.addEventListener('pointerleave', () => zone.classList.remove('hero-on'));
+  });
+
+  // Hero playlist: muted, no controls, cross-fades to the next clip when one ends, then loops
+  (function () {
+    const A = document.getElementById('heroA'), B = document.getElementById('heroB'), msg = document.getElementById('heroMsg');
+    const PL = HERO_PLAYLIST, N = PL.length; let idx = 0, fails = 0;
+    const setSrc = (v, i) => { v.dataset.fb = ''; v.src = PL[i]; v.load(); };
+    const show = (v, on) => { v.classList.toggle('opacity-100', on); v.classList.toggle('opacity-0', !on); };
+    const advance = v => {
+      const other = v === A ? B : A;
+      idx = (idx + 1) % N;
+      other.currentTime = 0; other.play().catch(() => {});
+      show(other, true); show(v, false);
+      setTimeout(() => setSrc(v, (idx + 1) % N), 800);
+    };
+    [A, B].forEach(v => {
+      v.addEventListener('ended', () => advance(v));
+      v.addEventListener('playing', () => { fails = 0; });
+      v.addEventListener('error', () => {
+        const active = v.classList.contains('opacity-100');
+        const src = v.getAttribute('src') || '';
+        if (/\.mp4\.mp4$/.test(src) && !v.dataset.fb) { // also try the single-extension name
+          v.dataset.fb = '1'; v.src = src.replace(/\.mp4\.mp4$/, '.mp4'); v.load();
+          if (active) v.play().catch(() => {});
+          return;
+        }
+        if (++fails > N * 2) { msg.classList.remove('hidden'); msg.classList.add('grid'); return; }
+        if (active) advance(v);
+      });
+    });
+    setSrc(A, 0); A.play().catch(() => {});
+    setSrc(B, N > 1 ? 1 : 0);
+  })();
   document.getElementById('close').onclick = closeM;
   modal.onclick = e => { if (e.target === modal) closeM(); };
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeM(); });
@@ -319,7 +405,7 @@ tailwind.config = { theme: { extend: {
     if (bad) return;
     document.getElementById('ok').classList.remove('hidden');
     const body = `Name: ${n}\nEmail: ${m}\nService: ${type.value}\n\n${g}`;
-    location.href = `mailto:hello@rimondas.com?subject=${encodeURIComponent('Project enquiry from ' + n)}&body=${encodeURIComponent(body)}`;
+    location.href = `mailto:rimondasfx@gmail.com?subject=${encodeURIComponent('Project enquiry from ' + n)}&body=${encodeURIComponent(body)}`;
   });
 </script>
 </body>
