@@ -3,7 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Rimon Das | 2D Explainer Videos for SaaS &amp; AI Startups</title>
+<title>Rimon Das | 2D Explainer Video</title>
+<link rel="icon" type="image/jpeg" href="Finle-Logo.jpg">
+<link rel="apple-touch-icon" href="Finle-Logo.jpg">
+<!-- Google Analytics (GA4) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-MXWP7DVWWJ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){ dataLayer.push(arguments); }
+  gtag('js', new Date());
+  gtag('config', 'G-MXWP7DVWWJ');
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
@@ -21,6 +31,8 @@ tailwind.config = { theme: { extend: {
   body { background: #F8FAFC; color: #0F172A; overflow-x: hidden; }
   :focus-visible { outline: 3px solid #3B82F6; outline-offset: 3px; }
   @keyframes drift { 0%,100% { transform: translate(0,0) rotate(0); } 50% { transform: translate(14px,-18px) rotate(12deg); } }
+  @keyframes floaty { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+  .floaty { animation: floaty 6s ease-in-out infinite; }
   @keyframes pulse-ring { 0% { transform: scale(.9); opacity: .7; } 100% { transform: scale(1.7); opacity: 0; } }
   @keyframes bar { 0%,100% { transform: scaleY(.4); } 50% { transform: scaleY(1); } }
   @keyframes fill { 0% { width: 0; } 80%,100% { width: 100%; } }
@@ -36,6 +48,14 @@ tailwind.config = { theme: { extend: {
   .site-header.scrolled .brand-text { font-size: 1rem; }
   .site-header.scrolled .logo-tile { width: 2rem; height: 2rem; }
   .site-header.scrolled .logo-tile img { width: 1.4rem; height: 1.4rem; }
+  /* Reviews: one horizontal row, scroll / swipe / drag sideways */
+  .review-track { display: flex; flex-direction: row; flex-wrap: nowrap; gap: 1.5rem; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; touch-action: pan-x pan-y; padding-bottom: 1rem; cursor: grab; scrollbar-width: thin; scrollbar-color: #3B82F6 #e2e8f0; }
+  .review-track > article { flex: 0 0 min(22rem, 85%); scroll-snap-align: start; }
+  .review-track.dragging { scroll-snap-type: none; scroll-behavior: auto; cursor: grabbing; user-select: none; }
+  .review-track::-webkit-scrollbar { height: 8px; }
+  .review-track::-webkit-scrollbar-thumb { background: #3B82F6; border-radius: 999px; }
+  .review-track::-webkit-scrollbar-track { background: #e2e8f0; border-radius: 999px; }
+  .portfolio-track > article { flex: 0 0 min(24rem, 85%); }
   /* Hero hover effect: grid + text pattern revealed around the cursor */
   .fx-zone > *:not(.hero-fx) { position: relative; z-index: 1; }
   .hero-fx { position: absolute; inset: 0; z-index: 0; pointer-events: none; opacity: 0; transition: opacity .35s ease;
@@ -50,7 +70,7 @@ tailwind.config = { theme: { extend: {
   .drift { animation: drift 7s ease-in-out infinite; }
   .ring { animation: pulse-ring 2.2s ease-out infinite; }
   .bar { transform-origin: bottom; animation: bar 1.6s ease-in-out infinite; }
-  @media (prefers-reduced-motion: reduce) { .drift, .ring, .bar, .pop, .fill { animation: none; } html { scroll-behavior: auto; } }
+  @media (prefers-reduced-motion: reduce) { .drift, .ring, .bar, .pop, .fill, .floaty, .animate-ping { animation: none; } html { scroll-behavior: auto; } }
 </style>
 </head>
 <body class="font-sans antialiased">
@@ -67,16 +87,17 @@ tailwind.config = { theme: { extend: {
       <a class="hover:text-brand" href="#services">Services</a>
       <a class="hover:text-brand" href="#process">Process</a>
       <a class="hover:text-brand" href="#contact">Contact</a>
+      <a class="hover:text-brand" href="#reviews">Reviews</a>
     </nav>
     <div class="flex items-center gap-2">
       <a href="https://wa.me/8801863887483" target="_blank" rel="noopener noreferrer" class="hidden rounded-full border border-slate-800 bg-slate-900 px-5 py-2.5 text-sm font-bold text-white transition-all hover:bg-slate-800 md:inline-block">Chat on WhatsApp</a>
-      <a href="https://calendly.com/rnediting4466/30min" target="_blank" rel="noopener noreferrer" class="rounded-full bg-brand px-4 py-2 text-sm font-bold text-white shadow-lg sm:px-5 sm:py-2.5 shadow-brand/30 hover:bg-blue-600">Book a Call</a>
+      <a href="https://calendly.com/rnediting4466/30min" target="_blank" rel="noopener noreferrer" class="rounded-full bg-brand px-4 py-2 text-sm font-bold text-white shadow-lg shadow-brand/30 hover:bg-blue-600 sm:px-5 sm:py-2.5">Book a Call</a>
       <button id="menuBtn" class="rounded-lg p-2.5 md:hidden" aria-label="Open menu" aria-expanded="false"><i data-lucide="menu"></i></button>
     </div>
   </div>
   <nav id="mobileNav" class="hidden border-t border-slate-200 px-4 py-3 text-base font-medium sm:px-8 md:hidden" aria-label="Mobile">
     <a class="block py-3" href="#portfolio">Portfolio</a><a class="block py-3" href="#services">Services</a>
-    <a class="block py-3" href="#process">Process</a><a class="block py-3" href="#contact">Contact</a>
+    <a class="block py-3" href="#process">Process</a><a class="block py-3" href="#contact">Contact</a><a class="block py-3" href="#reviews">Reviews</a>
   </nav>
 </header>
 
@@ -139,15 +160,18 @@ tailwind.config = { theme: { extend: {
         <h2 class="font-display text-2xl font-extrabold sm:text-3xl md:text-4xl">Videos that sell software</h2>
         <p class="mt-2 max-w-xl text-slate-600">Pick a category to filter, watch the video, or grab the storyboard to see how each one was planned.</p>
       </div>
+      <div class="flex flex-wrap items-center gap-3">
       <div class="flex flex-wrap gap-2" role="group" aria-label="Filter projects">
         <button class="filter rounded-full bg-navy px-4 py-2 text-sm font-medium text-white" data-f="all">All</button>
         <button class="filter rounded-full border border-slate-300 px-4 py-2.5 text-sm font-medium" data-f="explainer">2D Explainer</button>
         <button class="filter rounded-full border border-slate-300 px-4 py-2.5 text-sm font-medium" data-f="demo">Product Demo</button>
         <button class="filter rounded-full border border-slate-300 px-4 py-2.5 text-sm font-medium" data-f="promo">SaaS Promo</button>
       </div>
+      <div class="flex shrink-0 gap-2"><button type="button" id="pfPrev" aria-label="Previous videos" class="grid h-11 w-11 place-items-center rounded-2xl border border-slate-800 bg-slate-900 text-white transition-all hover:scale-105 hover:bg-slate-800"><i data-lucide="chevron-left" class="h-5 w-5"></i></button><button type="button" id="pfNext" aria-label="Next videos" class="grid h-11 w-11 place-items-center rounded-2xl border border-slate-800 bg-slate-900 text-white transition-all hover:scale-105 hover:bg-slate-800"><i data-lucide="chevron-right" class="h-5 w-5"></i></button></div>
+      </div>
     </div>
 
-    <div id="grid" class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+    <div id="grid" class="review-track portfolio-track" tabindex="0" aria-label="Video projects. Scroll or swipe sideways to see more.">
       <article class="card overflow-hidden rounded-2xl border border-slate-200 bg-paper" data-cat="explainer">
         <button class="watch group relative block aspect-video w-full overflow-hidden bg-navy" data-title="FlowDesk: workflow automation" data-yt="--_8KUs4tc8" data-mp4="" aria-label="Play FlowDesk: workflow automation"><img src="https://img.youtube.com/vi/--_8KUs4tc8/maxresdefault.jpg" onerror="this.onerror=null;this.src=this.src.replace('maxresdefault','hqdefault')" alt="FlowDesk: workflow automation thumbnail" loading="lazy" class="h-full w-full object-cover transition duration-300 group-hover:scale-105" decoding="async"><span class="absolute inset-0 grid place-items-center bg-navy/20"><span class="grid h-14 w-14 place-items-center rounded-full bg-brand text-white shadow-lg"><i data-lucide="play" class="h-6 w-6 fill-white"></i></span></span></button>
         <div class="p-5">
@@ -216,6 +240,35 @@ tailwind.config = { theme: { extend: {
   </div>
 </section>
 
+<!-- Booking -->
+<section id="book" class="relative w-full overflow-hidden bg-paper px-4 py-14 sm:px-8 md:px-12 md:py-20 lg:px-16">
+  <div class="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
+    <div>
+      <p class="mb-4 inline-flex items-center gap-2 rounded-full border border-brand/30 bg-brand/10 px-4 py-1.5 text-sm font-medium text-blue-700"><i data-lucide="calendar-check" class="h-4 w-4"></i> Free 30-minute call</p>
+      <h2 class="font-display text-3xl font-extrabold leading-tight sm:text-4xl lg:text-5xl">Let's map out the video that sells your product</h2>
+      <p class="mt-4 max-w-xl text-base text-slate-600 sm:text-lg">Pick a time that suits you. We'll talk through your product, your audience and your goals, and you'll leave with a clear plan, whether or not we work together.</p>
+      <ol class="mt-8 space-y-5">
+        <li class="flex gap-4"><span class="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-navy font-display font-bold text-white">1</span><div><h3 class="font-display text-lg font-bold">Choose your time</h3><p class="text-sm text-slate-600">Select a slot in the calendar. It shows times in your own timezone and sends an instant confirmation.</p></div></li>
+        <li class="flex gap-4"><span class="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-navy font-display font-bold text-white">2</span><div><h3 class="font-display text-lg font-bold">Tell me about your product</h3><p class="text-sm text-slate-600">Share a few lines about what you sell and who it is for, so we use the call to talk strategy.</p></div></li>
+        <li class="flex gap-4"><span class="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-brand font-display font-bold text-white">3</span><div><h3 class="font-display text-lg font-bold">Get a clear plan and quote</h3><p class="text-sm text-slate-600">We agree on the video type, length and timeline, and I send a fixed-price proposal after the call.</p></div></li>
+      </ol>
+      <div class="mt-8 flex flex-col items-start gap-4 sm:flex-row sm:items-center"><a href="https://calendly.com/rnediting4466/30min" target="_blank" rel="noopener noreferrer" class="inline-flex w-full items-center justify-center gap-2 rounded-full bg-brand px-7 py-3.5 font-bold text-white shadow-lg shadow-brand/30 transition-all hover:scale-105 hover:bg-blue-600 sm:w-auto"><i data-lucide="calendar-check" class="h-5 w-5"></i> Book a Call on Calendly</a>
+      <a href="https://wa.me/8801863887483" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-sm font-bold text-blue-700 hover:underline"><i data-lucide="message-circle" class="h-4 w-4"></i> Prefer to chat first? Message me on WhatsApp</a></div>
+    </div>
+
+    <div class="relative isolate">
+      <div class="floaty absolute -left-4 -top-4 -z-10 h-40 w-40 rounded-full bg-brand/25 blur-2xl" aria-hidden="true"></div>
+      <div class="floaty absolute -bottom-6 -right-4 -z-10 h-48 w-48 rounded-full bg-indigo-400/20 blur-2xl" style="animation-delay:-3s" aria-hidden="true"></div>
+      <span class="floaty absolute -top-4 right-6 z-10 hidden items-center gap-2 rounded-full bg-navy px-4 py-2 text-xs font-bold text-white shadow-xl sm:inline-flex" style="animation-delay:-1.5s"><i data-lucide="clock" class="h-4 w-4"></i> 30 min · Free</span>
+      <span class="floaty absolute -bottom-4 left-6 z-10 hidden items-center gap-2 rounded-full bg-brand px-4 py-2 text-xs font-bold text-white shadow-xl sm:inline-flex" style="animation-delay:-4s"><i data-lucide="check" class="h-4 w-4"></i> No obligation</span>
+      <div class="floaty rounded-3xl border border-slate-200 bg-white p-2 shadow-2xl shadow-navy/15" style="animation-duration:8s">
+        <!-- Calendly inline booking widget -->
+        <iframe src="https://calendly.com/rnediting4466/30min?hide_gdpr_banner=1&primary_color=3b82f6" title="Book a call with Rimon Das on Calendly" loading="lazy" class="block h-[700px] w-full rounded-2xl sm:h-[720px]"></iframe>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- Contact -->
 <section id="contact" class="fx-zone relative w-full overflow-hidden bg-white px-4 sm:px-8 md:px-12 lg:px-16 py-14 md:py-20">
   <!-- Hover effect layers (same as hero) -->
@@ -233,15 +286,54 @@ tailwind.config = { theme: { extend: {
       <div class="mt-8 flex flex-col gap-3 sm:flex-row"><a href="https://calendly.com/rnediting4466/30min" target="_blank" rel="noopener noreferrer" class="inline-flex w-full items-center justify-center gap-2 rounded-full bg-brand px-7 py-3.5 font-bold text-white shadow-lg shadow-brand/30 transition-all hover:scale-105 hover:bg-blue-600 sm:w-auto"><i data-lucide="calendar-check" class="h-5 w-5"></i> Book a Call on Calendly</a><a href="https://wa.me/8801863887483" target="_blank" rel="noopener noreferrer" class="inline-flex w-full items-center justify-center gap-2 rounded-full border border-slate-800 bg-slate-900 px-7 py-3.5 font-bold text-white transition-all hover:scale-105 hover:bg-slate-800 sm:w-auto"><i data-lucide="message-circle" class="h-5 w-5"></i> Chat on WhatsApp</a></div>
     </div>
 
-    <form id="form" class="space-y-4 rounded-3xl border border-slate-200 bg-white p-5 sm:p-6 md:p-8" novalidate>
-      <div><label for="name" class="mb-1 block text-sm font-medium">Your name</label><input id="name" required class="w-full rounded-xl border border-slate-300 px-4 py-3 text-base focus:border-brand" placeholder="Jane Cooper"></div>
-      <div><label for="email" class="mb-1 block text-sm font-medium">Work email</label><input id="email" type="email" required class="w-full rounded-xl border border-slate-300 px-4 py-3 focus:border-brand" placeholder="jane@startup.com"></div>
+    <form id="form" action="https://formspree.io/f/xdeeazlk" method="POST" class="space-y-4 rounded-3xl border border-slate-200 bg-white p-5 sm:p-6 md:p-8" novalidate>
+      <div><label for="name" class="mb-1 block text-sm font-medium">Your name</label><input id="name" name="name" required class="w-full rounded-xl border border-slate-300 px-4 py-3 text-base focus:border-brand" placeholder="Jane Cooper"></div>
+      <div><label for="email" class="mb-1 block text-sm font-medium">Work email</label><input id="email" name="email" type="email" required class="w-full rounded-xl border border-slate-300 px-4 py-3 focus:border-brand" placeholder="jane@startup.com"></div>
       <div><label for="type" class="mb-1 block text-sm font-medium">What do you need?</label>
-        <select id="type" class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3"><option>2D Explainer Video</option><option>SaaS Product Demo</option><option>Social Ad Creatives</option><option>Script / Storyboarding</option></select></div>
-      <div><label for="msg" class="mb-1 block text-sm font-medium">Tell me about your product</label><textarea id="msg" rows="4" required class="w-full rounded-xl border border-slate-300 px-4 py-3 focus:border-brand" placeholder="What does it do, and who is it for?"></textarea></div>
+        <select id="type" name="service" class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3"><option>2D Explainer Video</option><option>SaaS Product Demo</option><option>Social Ad Creatives</option><option>Script / Storyboarding</option></select></div>
+      <div><label for="msg" class="mb-1 block text-sm font-medium">Tell me about your product</label><textarea id="msg" name="message" rows="4" required class="w-full rounded-xl border border-slate-300 px-4 py-3 focus:border-brand" placeholder="What does it do, and who is it for?"></textarea></div>
+      <input type="hidden" name="_subject" value="New project enquiry from your portfolio website">
+      <input type="text" id="hp" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true" class="hidden">
       <p id="err" class="hidden text-sm font-medium text-red-600">Add your name, a valid email and a short message to send.</p>
-      <button class="inline-flex w-full items-center justify-center gap-2 rounded-full bg-navy px-6 py-3.5 font-bold text-white hover:bg-slate-800"><i data-lucide="send" class="h-5 w-5"></i> Send Message</button>
+      <button id="sendBtn" class="inline-flex w-full items-center justify-center gap-2 rounded-full bg-navy px-6 py-3.5 font-bold text-white hover:bg-slate-800"><i data-lucide="send" class="h-5 w-5"></i> Send Message</button>
       <p id="ok" class="hidden rounded-xl bg-green-50 p-3 text-sm font-medium text-green-700">Message ready. Your email app opened with the details. Send it and I'll reply within one business day.</p>
+    </form>
+  </div>
+</section>
+<!-- Client Testimonials -->
+<section id="reviews" class="w-full bg-white px-4 py-14 sm:px-8 md:px-12 md:py-20 lg:px-16">
+  <div class="mb-8 flex items-end justify-between gap-4">
+    <div class="max-w-2xl">
+      <h2 class="font-display text-2xl font-extrabold sm:text-3xl md:text-4xl">What clients say</h2>
+    <p class="mt-2 text-slate-600">Feedback from SaaS and AI teams I've made explainer videos for.</p>
+    </div>
+    <div class="flex shrink-0 gap-2">
+      <button type="button" id="rvPrev" aria-label="Previous reviews" class="grid h-11 w-11 place-items-center rounded-2xl border border-slate-800 bg-slate-900 text-white transition-all hover:scale-105 hover:bg-slate-800"><i data-lucide="chevron-left" class="h-5 w-5"></i></button>
+      <button type="button" id="rvNext" aria-label="Next reviews" class="grid h-11 w-11 place-items-center rounded-2xl border border-slate-800 bg-slate-900 text-white transition-all hover:scale-105 hover:bg-slate-800"><i data-lucide="chevron-right" class="h-5 w-5"></i></button>
+    </div>
+  </div>
+  <!-- NOTE: these three cards are sample reviews. Replace them with your real client reviews. -->
+  <div id="reviewGrid" class="review-track" tabindex="0" aria-label="Client reviews. Scroll or swipe sideways to see more.">
+    <article class="flex w-[85%] shrink-0 snap-start flex-col rounded-2xl border border-slate-200 bg-paper p-6 sm:w-[22rem]"><span class="flex gap-0.5" role="img" aria-label="5 out of 5 stars"><i data-lucide="star" class="h-5 w-5 fill-yellow-400 text-yellow-400"></i><i data-lucide="star" class="h-5 w-5 fill-yellow-400 text-yellow-400"></i><i data-lucide="star" class="h-5 w-5 fill-yellow-400 text-yellow-400"></i><i data-lucide="star" class="h-5 w-5 fill-yellow-400 text-yellow-400"></i><i data-lucide="star" class="h-5 w-5 fill-yellow-400 text-yellow-400"></i></span><p class="mt-4 flex-1 text-slate-700">&ldquo;We needed one clear video for our homepage. Rimon turned a complicated product into a story our visitors understood straight away.&rdquo;</p><div class="mt-6 flex items-center gap-3"><span class="grid h-11 w-11 place-items-center rounded-full bg-navy font-display font-bold text-white">A</span><div><p class="font-bold">Amelia R.</p><p class="text-sm text-slate-500">Founder, SaaS startup</p></div></div></article><article class="flex w-[85%] shrink-0 snap-start flex-col rounded-2xl border border-slate-200 bg-paper p-6 sm:w-[22rem]"><span class="flex gap-0.5" role="img" aria-label="5 out of 5 stars"><i data-lucide="star" class="h-5 w-5 fill-yellow-400 text-yellow-400"></i><i data-lucide="star" class="h-5 w-5 fill-yellow-400 text-yellow-400"></i><i data-lucide="star" class="h-5 w-5 fill-yellow-400 text-yellow-400"></i><i data-lucide="star" class="h-5 w-5 fill-yellow-400 text-yellow-400"></i><i data-lucide="star" class="h-5 w-5 fill-yellow-400 text-yellow-400"></i></span><p class="mt-4 flex-1 text-slate-700">&ldquo;Clear script, clean storyboard and quick revisions. The final animation matched our brand perfectly and arrived on schedule.&rdquo;</p><div class="mt-6 flex items-center gap-3"><span class="grid h-11 w-11 place-items-center rounded-full bg-navy font-display font-bold text-white">D</span><div><p class="font-bold">Daniel K.</p><p class="text-sm text-slate-500">Head of Marketing, B2B platform</p></div></div></article><article class="flex w-[85%] shrink-0 snap-start flex-col rounded-2xl border border-slate-200 bg-paper p-6 sm:w-[22rem]"><span class="flex gap-0.5" role="img" aria-label="5 out of 5 stars"><i data-lucide="star" class="h-5 w-5 fill-yellow-400 text-yellow-400"></i><i data-lucide="star" class="h-5 w-5 fill-yellow-400 text-yellow-400"></i><i data-lucide="star" class="h-5 w-5 fill-yellow-400 text-yellow-400"></i><i data-lucide="star" class="h-5 w-5 fill-yellow-400 text-yellow-400"></i><i data-lucide="star" class="h-5 w-5 fill-yellow-400 text-yellow-400"></i></span><p class="mt-4 flex-1 text-slate-700">&ldquo;He explained our AI feature so simply that our sales team now sends the video before every demo. Easy to work with.&rdquo;</p><div class="mt-6 flex items-center gap-3"><span class="grid h-11 w-11 place-items-center rounded-full bg-navy font-display font-bold text-white">S</span><div><p class="font-bold">Sofia M.</p><p class="text-sm text-slate-500">Product Lead, AI startup</p></div></div></article>
+  </div>
+
+  <div class="mt-14 grid gap-8 lg:grid-cols-3">
+    <div>
+      <h3 class="font-display text-xl font-extrabold sm:text-2xl">Worked with me? Leave a review</h3>
+      <p class="mt-2 text-slate-600">Rate your experience and share a few words. Reviews are sent to me first and added to this page after approval.</p>
+    </div>
+    <form id="reviewForm" action="https://formspree.io/f/xdeeazlk" method="POST" class="space-y-4 rounded-3xl border border-slate-200 bg-paper p-5 sm:p-6 lg:col-span-2" novalidate>
+      <input type="hidden" name="_subject" value="New client review submitted on your website">
+      <input type="hidden" name="form_type" value="client review">
+      <input type="hidden" name="rating" id="ratingVal" value="">
+      <input type="text" id="rhp" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true" class="hidden">
+      <div><label for="rname" class="mb-1 block text-sm font-medium">Your name</label><input id="rname" name="name" required class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-base focus:border-brand" placeholder="Jane Cooper"></div>
+      <div><span class="mb-1 block text-sm font-medium" id="rlabel">Your rating</span>
+        <div id="stars" role="radiogroup" aria-labelledby="rlabel" class="flex gap-1"><button type="button" data-v="1" role="radio" aria-checked="false" aria-label="1 star" class="star rounded-lg p-1.5 text-slate-300 transition hover:scale-110"><i data-lucide="star" class="h-8 w-8"></i></button><button type="button" data-v="2" role="radio" aria-checked="false" aria-label="2 stars" class="star rounded-lg p-1.5 text-slate-300 transition hover:scale-110"><i data-lucide="star" class="h-8 w-8"></i></button><button type="button" data-v="3" role="radio" aria-checked="false" aria-label="3 stars" class="star rounded-lg p-1.5 text-slate-300 transition hover:scale-110"><i data-lucide="star" class="h-8 w-8"></i></button><button type="button" data-v="4" role="radio" aria-checked="false" aria-label="4 stars" class="star rounded-lg p-1.5 text-slate-300 transition hover:scale-110"><i data-lucide="star" class="h-8 w-8"></i></button><button type="button" data-v="5" role="radio" aria-checked="false" aria-label="5 stars" class="star rounded-lg p-1.5 text-slate-300 transition hover:scale-110"><i data-lucide="star" class="h-8 w-8"></i></button></div></div>
+      <div><label for="rmsg" class="mb-1 block text-sm font-medium">Your review</label><textarea id="rmsg" name="message" rows="4" required class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-base focus:border-brand" placeholder="How was the experience and the final video?"></textarea></div>
+      <p id="rerr" class="hidden text-sm font-medium text-red-600">Please add your name, a star rating and a short review.</p>
+      <button id="rBtn" class="inline-flex w-full items-center justify-center gap-2 rounded-full bg-navy px-6 py-3.5 font-bold text-white hover:bg-slate-800 sm:w-auto"><i data-lucide="send" class="h-5 w-5"></i> Submit Review</button>
+      <p id="rok" class="hidden rounded-xl bg-green-50 p-3 text-sm font-medium text-green-700"></p>
     </form>
   </div>
 </section>
@@ -249,9 +341,16 @@ tailwind.config = { theme: { extend: {
 
 <!-- Footer -->
 <footer class="border-t border-slate-200 bg-white" style="padding-bottom: env(safe-area-inset-bottom, 0px)">
-  <div class="w-full px-4 sm:px-8 md:px-12 lg:px-16 flex flex-col items-center justify-between gap-4 py-8 sm:flex-row">
-    <div class="flex items-center gap-3"><span class="grid h-9 w-9 place-items-center rounded-lg bg-navy"><img src="data:image/png;base64,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" alt="Rimon Das logo" width="24" height="24" class="h-6 w-6"></span><p class="text-sm text-slate-500">© <span id="yr">2026</span> Rimon Das. All rights reserved.</p></div>
-    <div class="flex flex-wrap gap-3">
+  <div class="grid w-full grid-cols-1 items-center gap-6 px-4 py-8 text-center sm:px-8 md:px-12 lg:grid-cols-3 lg:px-16">
+    <!-- Left: logo, name, copyright, privacy -->
+    <div class="flex items-center justify-center gap-3 lg:justify-self-start">
+      <span class="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-navy"><img src="data:image/png;base64,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" alt="Rimon Das logo" width="24" height="24" class="h-6 w-6"></span>
+      <div class="text-left leading-tight"><span class="block font-display text-base font-extrabold">Rimon Das</span><p class="text-sm text-slate-500">&copy; <span id="yr">2026</span> Rimon Das. All rights reserved. &middot; <a href="#privacy" id="privacyLink" class="underline hover:text-brand">Privacy Policy</a></p></div>
+    </div>
+    <!-- Center: visitor counter -->
+    <div id="visitBox" class="flex flex-wrap items-center justify-center gap-3 text-slate-700 lg:justify-self-center"><i data-lucide="users" class="h-6 w-6 text-brand"></i><span class="text-base font-medium">Total site visitors:</span><span id="visitCount" class="text-base font-medium tabular-nums" aria-live="polite">&hellip;</span></div>
+    <!-- Right: social icons -->
+    <div class="flex flex-wrap justify-center gap-3 lg:justify-self-end">
       <a href="https://www.linkedin.com/in/rimon-das-1705643a1/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" class="grid h-10 w-10 place-items-center rounded-2xl border border-slate-800 bg-slate-900 text-white transition-all hover:scale-105 hover:bg-slate-800"><i data-lucide="linkedin" class="h-5 w-5"></i></a>
       <a href="https://www.youtube.com/@graphicmotion4/videos" target="_blank" rel="noopener" aria-label="YouTube" class="grid h-10 w-10 place-items-center rounded-2xl border border-slate-800 bg-slate-900 text-white transition-all hover:scale-105 hover:bg-slate-800"><i data-lucide="youtube" class="h-5 w-5"></i></a>
       <a href="https://www.instagram.com/rimondas4466/?hl=en" target="_blank" rel="noopener" aria-label="Instagram" class="grid h-10 w-10 place-items-center rounded-2xl border border-slate-800 bg-slate-900 text-white transition-all hover:scale-105 hover:bg-slate-800"><i data-lucide="instagram" class="h-5 w-5"></i></a>
@@ -262,14 +361,50 @@ tailwind.config = { theme: { extend: {
   </div>
 </footer>
 
+<!-- Floating live support badge -->
+<a href="https://wa.me/8801863887483" target="_blank" rel="noopener noreferrer" id="supportBadge" draggable="false" title="Drag to move" aria-label="24/7 live support: chat with us on WhatsApp"
+   class="fixed right-4 z-30 flex cursor-grab touch-none select-none items-center gap-3 rounded-full border border-slate-800 bg-slate-900 py-2.5 pl-3 pr-4 text-white shadow-2xl transition-all hover:scale-105 hover:bg-slate-800 sm:right-6"
+   style="bottom: calc(1rem + env(safe-area-inset-bottom, 0px))">
+  <span class="relative grid h-9 w-9 place-items-center rounded-full bg-brand">
+    <i data-lucide="message-circle" class="h-5 w-5"></i>
+    <span class="absolute -right-0.5 -top-0.5 flex h-3 w-3"><span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75"></span><span class="relative inline-flex h-3 w-3 rounded-full border-2 border-slate-900 bg-green-400"></span></span>
+  </span>
+  <span class="leading-tight"><span class="block text-sm font-bold">24/7 Live Support</span><span class="hidden text-xs text-slate-300 sm:block">Need help? Chat with us</span></span>
+</a>
+
+<!-- Privacy policy -->
+<div id="privacyModal" class="fixed inset-0 z-50 hidden place-items-center bg-navy/90 p-3 sm:p-6" role="dialog" aria-modal="true" aria-labelledby="privTitle">
+  <div class="flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-3xl bg-white shadow-2xl">
+    <div class="flex items-center justify-between border-b border-slate-200 px-5 py-4 sm:px-6">
+      <h2 id="privTitle" class="font-display text-xl font-extrabold">Privacy Policy</h2>
+      <button id="privClose" type="button" class="rounded-full p-2 hover:bg-slate-100" aria-label="Close privacy policy"><i data-lucide="x"></i></button>
+    </div>
+    <div class="space-y-4 overflow-y-auto px-5 py-5 text-sm leading-relaxed text-slate-700 sm:px-6">
+      <p>This website belongs to Rimon Das. This page explains what information is collected when you use it and how it is used. Last updated: October 25, 2026.</p>
+      <h3 class="font-display font-bold text-navy">Information you send me</h3>
+      <p>When you use the contact form or submit a review, I receive the details you enter, such as your name, email address, selected service, rating and message. The form is processed by Formspree and delivered to my email. I use this only to reply to you, deliver the work you ask about, and, with your review, to display it on this site after approval.</p>
+      <h3 class="font-display font-bold text-navy">Analytics and cookies</h3>
+      <p>I use Google Analytics to understand how visitors use the site (for example pages viewed, device type and approximate location). It may set cookies and collect an anonymous identifier. You can block these cookies in your browser settings or use a Google Analytics opt-out add-on.</p>
+      <h3 class="font-display font-bold text-navy">Visitor counter</h3>
+      <p>The visitor counter adds one to a total each time the page loads. It does not store your name, email or other personal details with that count.</p>
+      <h3 class="font-display font-bold text-navy">Third-party services</h3>
+      <p>Videos are played from YouTube (privacy-enhanced mode), the booking calendar is provided by Calendly, and chat links open WhatsApp. These services have their own privacy policies and may collect data when you use them.</p>
+      <h3 class="font-display font-bold text-navy">Sharing and storage</h3>
+      <p>I do not sell your personal information. It is shared only with the services needed to run the site and is kept only as long as needed to respond to you or meet legal obligations.</p>
+      <h3 class="font-display font-bold text-navy">Your choices</h3>
+      <p>You can ask me to access, correct or delete the information you sent by emailing <a class="font-medium text-blue-700 underline" href="mailto:rimondasfx@gmail.com">rimondasfx@gmail.com</a>. I may update this policy from time to time, and the date above will change when I do.</p>
+    </div>
+  </div>
+</div>
+
 <!-- Video modal -->
-<div id="modal" class="fixed inset-0 z-50 hidden place-items-center bg-navy/90 p-3 sm:p-6" role="dialog" aria-modal="true" aria-labelledby="mTitle">
-  <div class="w-full max-w-3xl lg:max-w-5xl">
+<div id="modal" class="fixed inset-0 z-50 hidden place-items-center bg-navy/95 p-2 sm:p-4" role="dialog" aria-modal="true" aria-labelledby="mTitle">
+  <div class="w-full" style="max-width: min(98vw, calc((100vh - 6rem) * 16 / 9))">
     <div class="mb-3 flex items-center justify-between text-white">
       <h3 id="mTitle" class="font-display text-lg font-bold"></h3>
       <button id="close" class="rounded-full p-3 hover:bg-white/10" aria-label="Close video"><i data-lucide="x"></i></button>
     </div>
-    <div id="player" class="aspect-video overflow-hidden rounded-2xl bg-slate-800"></div>
+    <div id="player" class="aspect-video overflow-hidden rounded-xl bg-black shadow-2xl sm:rounded-2xl"></div>
   </div>
 </div>
 
@@ -313,6 +448,7 @@ tailwind.config = { theme: { extend: {
     document.querySelectorAll('.filter').forEach(x => x.className = 'filter rounded-full border border-slate-300 px-4 py-2.5 text-sm font-medium');
     b.className = 'filter rounded-full bg-navy px-4 py-2 text-sm font-medium text-white';
     document.querySelectorAll('.card').forEach(c => c.style.display = (b.dataset.f === 'all' || c.dataset.cat === b.dataset.f) ? '' : 'none');
+    document.getElementById('grid').scrollTo({ left: 0, behavior: 'smooth' });
   });
 
   // Video modal
@@ -341,6 +477,132 @@ tailwind.config = { theme: { extend: {
   };
   const closeM = () => { modal.classList.replace('grid', 'hidden'); player.innerHTML = ''; };
   document.querySelectorAll('.watch, .slot').forEach(b => b.onclick = () => openM(b.dataset.title, b.dataset.yt, b.dataset.mp4));
+
+  // Review slider arrows
+  (function () {
+    const track = document.getElementById('reviewGrid');
+    const step = () => { const c = track.querySelector('article'); return c ? c.getBoundingClientRect().width + 24 : 320; };
+    document.getElementById('rvPrev').onclick = () => track.scrollBy({ left: -step(), behavior: 'smooth' });
+    document.getElementById('rvNext').onclick = () => track.scrollBy({ left: step(), behavior: 'smooth' });
+    // mouse drag-to-scroll (touch and trackpads already scroll natively)
+    let down = false, sx = 0, sl = 0;
+    track.addEventListener('pointerdown', e => { if (e.pointerType !== 'mouse') return; down = true; sx = e.clientX; sl = track.scrollLeft; track.classList.add('dragging'); });
+    window.addEventListener('pointermove', e => { if (down) track.scrollLeft = sl - (e.clientX - sx); });
+    window.addEventListener('pointerup', () => { down = false; track.classList.remove('dragging'); });
+  })();
+
+  // Review form: star rating + submit to Formspree (reviews are approved by you before being added to the page)
+  (function () {
+    const form = document.getElementById('reviewForm'), val = document.getElementById('ratingVal');
+    const btns = document.querySelectorAll('#stars .star');
+    let rating = 0;
+    const paint = () => btns.forEach(b => {
+      const on = +b.dataset.v <= rating;
+      b.classList.toggle('text-yellow-400', on); b.classList.toggle('text-slate-300', !on);
+      b.setAttribute('aria-checked', String(+b.dataset.v === rating));
+      const s = b.querySelector('svg'); if (s) s.style.fill = on ? 'currentColor' : 'none';
+    });
+    btns.forEach(b => b.addEventListener('click', () => { rating = +b.dataset.v; val.value = rating; paint(); }));
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
+      const n = document.getElementById('rname').value.trim(), g = document.getElementById('rmsg').value.trim();
+      const err = document.getElementById('rerr'), ok = document.getElementById('rok'), btn = document.getElementById('rBtn');
+      const bad = !n || !g || !rating; err.classList.toggle('hidden', !bad); ok.classList.add('hidden');
+      if (bad || document.getElementById('rhp').value) return;
+      btn.disabled = true; btn.classList.add('opacity-60');
+      try {
+        const res = await fetch(form.action, { method: 'POST', body: new FormData(form), headers: { 'Accept': 'application/json' } });
+        if (!res.ok) throw new Error('send failed');
+        // show the reviewer a private preview card marked as pending
+        const card = document.createElement('article');
+        card.className = 'flex w-[85%] shrink-0 snap-start flex-col rounded-2xl border border-dashed border-brand bg-brand/5 p-6 sm:w-[22rem]';
+        const star = '<svg viewBox="0 0 24 24" class="h-5 w-5 fill-yellow-400 text-yellow-400" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>';
+        card.innerHTML = '<span class="flex gap-0.5">' + star.repeat(rating) + '</span><p class="rv-text mt-4 flex-1 text-slate-700"></p><div class="mt-6"><p class="rv-name font-bold"></p><p class="text-sm font-medium text-blue-700">Pending approval (only you can see this)</p></div>';
+        card.querySelector('.rv-text').textContent = '\u201C' + g + '\u201D';
+        card.querySelector('.rv-name').textContent = n;
+        const track = document.getElementById('reviewGrid'); track.prepend(card); track.scrollTo({ left: 0, behavior: 'smooth' });
+        ok.textContent = 'Thank you! Your review was sent and will appear here after approval.';
+        ok.classList.remove('hidden'); form.reset(); rating = 0; val.value = ''; paint();
+        if (window.gtag) gtag('event', 'submit_review', { rating: card.querySelectorAll('svg').length });
+      } catch (_) {
+        ok.textContent = 'Could not send your review right now. Please try again in a moment.';
+        ok.classList.remove('hidden');
+      } finally { btn.disabled = false; btn.classList.remove('opacity-60'); }
+    });
+  })();
+
+  // Video slider: arrows + mouse drag-to-scroll (touch and trackpad scroll natively)
+  (function () {
+    const track = document.getElementById('grid');
+    const step = () => {
+      const c = Array.from(track.querySelectorAll('article')).find(a => a.style.display !== 'none');
+      return c ? c.getBoundingClientRect().width + 24 : 340;
+    };
+    document.getElementById('pfPrev').onclick = () => track.scrollBy({ left: -step(), behavior: 'smooth' });
+    document.getElementById('pfNext').onclick = () => track.scrollBy({ left: step(), behavior: 'smooth' });
+    let down = false, sx = 0, sl = 0, moved = false;
+    track.addEventListener('pointerdown', e => { if (e.pointerType !== 'mouse') return; down = true; moved = false; sx = e.clientX; sl = track.scrollLeft; });
+    window.addEventListener('pointermove', e => {
+      if (!down) return;
+      if (Math.abs(e.clientX - sx) > 5) { moved = true; track.classList.add('dragging'); }
+      if (moved) track.scrollLeft = sl - (e.clientX - sx);
+    });
+    window.addEventListener('pointerup', () => { down = false; track.classList.remove('dragging'); });
+    track.addEventListener('click', e => { if (moved) { e.preventDefault(); e.stopPropagation(); moved = false; } }, true); // a drag should not trigger Watch Video
+  })();
+
+  // Visitor counter: +1 on every page load (tries one free counter service, then a backup)
+  (function () {
+    const box = document.getElementById('visitBox'), el = document.getElementById('visitCount');
+    const NS = 'rimondas-portfolio-site', KEY = 'visits';
+    const tries = [
+      () => fetch('https://api.counterapi.dev/v1/' + NS + '/' + KEY + '/up').then(r => r.json()).then(d => d.count),
+      () => fetch('https://abacus.jasoncameron.dev/hit/' + NS + '/' + KEY).then(r => r.json()).then(d => d.value)
+    ];
+    (async () => {
+      for (const f of tries) {
+        try { const n = Number(await f()); if (Number.isFinite(n) && n > 0) { el.textContent = n < 100 ? String(n).padStart(2, '0') : n.toLocaleString('en-US'); return; } } catch (_) {}
+      }
+      box.classList.add('hidden'); // counter service unreachable: hide instead of showing a wrong number
+    })();
+  })();
+
+  // Privacy policy popup
+  (function () {
+    const m = document.getElementById('privacyModal');
+    const open = () => { m.classList.replace('hidden', 'grid'); document.getElementById('privClose').focus(); };
+    const close = () => m.classList.replace('grid', 'hidden');
+    document.getElementById('privacyLink').addEventListener('click', e => { e.preventDefault(); open(); });
+    document.getElementById('privClose').onclick = close;
+    m.addEventListener('click', e => { if (e.target === m) close(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
+    if (location.hash === '#privacy') open();
+  })();
+
+  // Draggable live support widget (mouse, touch and pen); a tap or click still opens WhatsApp
+  (function () {
+    const b = document.getElementById('supportBadge');
+    let down = false, moved = false, sx = 0, sy = 0, ox = 0, oy = 0;
+    const clamp = (x, y) => [Math.min(Math.max(0, x), window.innerWidth - b.offsetWidth), Math.min(Math.max(0, y), window.innerHeight - b.offsetHeight)];
+    const place = (x, y) => { const c = clamp(x, y); b.style.left = c[0] + 'px'; b.style.top = c[1] + 'px'; b.style.right = 'auto'; b.style.bottom = 'auto'; };
+    b.addEventListener('dragstart', e => e.preventDefault());
+    b.addEventListener('pointerdown', e => {
+      down = true; moved = false; sx = e.clientX; sy = e.clientY;
+      const r = b.getBoundingClientRect(); ox = r.left; oy = r.top;
+      b.setPointerCapture(e.pointerId);
+    });
+    b.addEventListener('pointermove', e => {
+      if (!down) return;
+      const dx = e.clientX - sx, dy = e.clientY - sy;
+      if (!moved && Math.hypot(dx, dy) < 6) return;
+      if (!moved) { moved = true; b.style.transition = 'none'; b.classList.replace('cursor-grab', 'cursor-grabbing'); }
+      place(ox + dx, oy + dy);
+    });
+    const end = () => { down = false; b.style.transition = ''; b.classList.replace('cursor-grabbing', 'cursor-grab'); };
+    b.addEventListener('pointerup', end); b.addEventListener('pointercancel', end);
+    b.addEventListener('click', e => { if (moved) { e.preventDefault(); moved = false; } });
+    window.addEventListener('resize', () => { if (b.style.left) { const r = b.getBoundingClientRect(); place(r.left, r.top); } });
+  })();
 
   // Hover effect: grid + text pattern follow the cursor inside the hero and contact sections only
   document.querySelectorAll('.fx-zone').forEach(zone => {
@@ -396,16 +658,30 @@ tailwind.config = { theme: { extend: {
     tt = setTimeout(() => toast.classList.add('opacity-0', 'translate-y-6'), 2800);
   });
 
-  // Contact form -> opens email draft
-  document.getElementById('form').addEventListener('submit', e => {
+  // Contact form: posts to Formspree, which forwards every message to rimondasfx@gmail.com
+  const CONTACT_EMAIL = 'rimondasfx@gmail.com';
+  const contactForm = document.getElementById('form');
+  contactForm.addEventListener('submit', async e => {
     e.preventDefault();
-    const n = name.value.trim(), m = email.value.trim(), g = msg.value.trim();
+    const n = document.getElementById('name').value.trim(), m = document.getElementById('email').value.trim();
+    const svc = document.getElementById('type').value, g = document.getElementById('msg').value.trim();
+    const err = document.getElementById('err'), ok = document.getElementById('ok'), btn = document.getElementById('sendBtn');
     const bad = !n || !g || !/^\S+@\S+\.\S+$/.test(m);
-    document.getElementById('err').classList.toggle('hidden', !bad);
+    err.classList.toggle('hidden', !bad); ok.classList.add('hidden');
     if (bad) return;
-    document.getElementById('ok').classList.remove('hidden');
-    const body = `Name: ${n}\nEmail: ${m}\nService: ${type.value}\n\n${g}`;
-    location.href = `mailto:rimondasfx@gmail.com?subject=${encodeURIComponent('Project enquiry from ' + n)}&body=${encodeURIComponent(body)}`;
+    if (document.getElementById('hp').value) return; // spam trap
+    btn.disabled = true; btn.classList.add('opacity-60');
+    try {
+      const res = await fetch(contactForm.action, { method: 'POST', body: new FormData(contactForm), headers: { 'Accept': 'application/json' } });
+      if (!res.ok) throw new Error('send failed');
+      ok.textContent = 'Thank you! Your message was sent and I will reply within one business day.';
+      ok.classList.remove('hidden'); contactForm.reset();
+      if (window.gtag) gtag('event', 'generate_lead', { method: 'contact_form', service: svc });
+    } catch (_) {
+      ok.textContent = 'Could not send right now, so your email app opened with the details instead. Please press send there.';
+      ok.classList.remove('hidden');
+      location.href = 'mailto:' + CONTACT_EMAIL + '?subject=' + encodeURIComponent('Project enquiry from ' + n) + '&body=' + encodeURIComponent('Name: ' + n + '\nEmail: ' + m + '\nService: ' + svc + '\n\n' + g);
+    } finally { btn.disabled = false; btn.classList.remove('opacity-60'); }
   });
 </script>
 </body>
